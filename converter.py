@@ -26,7 +26,7 @@ def encode_xml(text):
     text = text.replace("'", "&apos;")
     text = text.replace("<", "&lt;")
     text = text.replace(">", "&gt;")
-    return text
+    return text.encode('utf-8')
 
 cols = ["id", "type", "startTime", "endTime", "direction", "isDraft", "isRead", "isMissedCall", "isEmergencyCall", "status", "bytesReceived", "localUid", "remoteUid", "parentId", "subject", "freeText", "groupId", "messageToken", "lastModified", "vCardFileName", "vCardLabel", "isDeleted", "reportDelivery", "validityPeriod", "contentLocation", "messageParts", "headers", "readStatus", "reportRead", "reportedReadRequested", "mmsId", "isAction", "hasExtraProperties", "hasMessageParts"]
 
