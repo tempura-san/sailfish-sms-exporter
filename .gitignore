@@ -1,0 +1,6 @@
+# input files
+commhistory.db
+
+# output files
+calls.xml
+sms.xml
