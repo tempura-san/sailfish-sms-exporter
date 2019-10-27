@@ -19,6 +19,8 @@ calls_filename = 'calls.xml'
 
 def encode_xml(text):
     """Escape the text for xml."""
+    if not text:
+        return ""
     text = text.replace("&", "&amp;")
     text = text.replace("\"", "&quot;")
     text = text.replace("'", "&apos;")
