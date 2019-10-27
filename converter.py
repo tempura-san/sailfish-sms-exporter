@@ -34,7 +34,7 @@ for entry in entries:
     # https://synctech.com.au/sms-backup-restore/fields-in-xml-backup-files/
     sms = ET.SubElement(outxml, 'sms')
     sms.set('protocol', "0") # 0 = SMS
-    sms.set('address', str(entry[cols.index('remoteUid')])) # phone number
+    sms.set('address', entry[cols.index('remoteUid')]) # phone number
     sms.set('date', str(entry[cols.index('startTime')] * 1000)) # date sent/received
     sms.set('type', str(entry[cols.index('direction')])) # 1..received, 2..sent
     sms.set('subject', entry[cols.index('subject')] or "null") # usually "null" for SMS
@@ -53,28 +53,20 @@ outxml = ET.Element('calls')
 outxml.set('count', str(len(entries)))
 
 for entry in entries:
+    # a description of the used XML format can be found here:
+    # https://synctech.com.au/sms-backup-restore/fields-in-xml-backup-files/
     if entry[cols.index('isMissedCall')]:
         calltype = 3
     else:
         calltype = entry[cols.index('direction')]
-    date = datetime.fromtimestamp(entry[cols.index('startTime')])
-    out += """<call
-    type="{type}"
-    number="{number}"
-    contact_name="{name}"
-    date="{date}"
-    readable_date="{readble_date}"
-    duration="{duration}"/>\n""".format(
-        type=calltype,
-        number=entry[cols.index('remoteUid')],
-        name="",
-        date=entry[cols.index('startTime')] * 1000,
-        readble_date=date.strftime("%d.%m.%Y %H:%M:%S"),
-        duration=entry[cols.index('endTime')] - entry[cols.index('startTime')]
-    )
-out += "\n</calls>"
 
-with open(calls_filename, 'w') as fp:
-    fp.write(out)
+    call = ET.SubElement(outxml, 'call')
+    call.set('type', str(calltype)) # 1..incoming, 2..outgoing, 3..missed, 4..voicemail, 5..rejected, 6..refused
+    call.set('number', entry[cols.index('remoteUid')]) # phone number called
+    call.set('date', str(entry[cols.index('startTime')] * 1000)) # date of call
+    call.set('duration', str(entry[cols.index('endTime')] - entry[cols.index('startTime')])) # call duration in seconds
+
+with open(calls_filename, 'wb') as fp:
+    fp.write(ET.tostring(outxml, encoding='utf8', method='xml', pretty_print=True))
 
 print("Done")
