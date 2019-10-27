@@ -20,14 +20,11 @@ calls_filename = 'calls.xml'
 cols = ["id", "type", "startTime", "endTime", "direction", "isDraft", "isRead", "isMissedCall", "isEmergencyCall", "status", "bytesReceived", "localUid", "remoteUid", "parentId", "subject", "freeText", "groupId", "messageToken", "lastModified", "vCardFileName", "vCardLabel", "isDeleted", "reportDelivery", "validityPeriod", "contentLocation", "messageParts", "headers", "readStatus", "reportRead", "reportedReadRequested", "mmsId", "isAction", "hasExtraProperties", "hasMessageParts"]
 
 connection = sqlite3.connect(jolla_db_filename)
-cursor = connection.cursor()
-cursor.execute("SELECT * FROM Events WHERE type=2")
-entries = cursor.fetchall()
 
-date = datetime.now()
+entries = connection.cursor().execute("SELECT * FROM Events WHERE type=2").fetchall()
 
-outxml = ET.Element('smses')
-outxml.set('count', str(len(entries)))
+print("found {} SMS entries - processing...".format(len(entries)))
+outxml = ET.Element('smses', attrib={'count': str(len(entries))})
 
 for entry in entries:
     # a description of the used XML format can be found here:
@@ -45,12 +42,10 @@ for entry in entries:
 with open(sms_filename, 'wb') as fp:
     fp.write(ET.tostring(outxml, encoding='utf8', method='xml', pretty_print=True))
 
-cursor = connection.cursor()
-cursor.execute("SELECT * FROM Events WHERE type=3")
-entries = cursor.fetchall()
+entries = connection.cursor().execute("SELECT * FROM Events WHERE type=3").fetchall()
 
-outxml = ET.Element('calls')
-outxml.set('count', str(len(entries)))
+print("found {} call entries - processing...".format(len(entries)))
+outxml = ET.Element('calls', attrib={'count': str(len(entries))})
 
 for entry in entries:
     # a description of the used XML format can be found here:
