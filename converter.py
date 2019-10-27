@@ -9,13 +9,19 @@ and creates a xml-file of all contained sms that is understood by the Android Ap
 <https://play.google.com/store/apps/details?id=com.riteshsahu.SMSBackupRestore>).
 """
 
+import argparse
 import sqlite3
 from datetime import datetime
 from lxml import etree as ET
 
-jolla_db_filename = 'commhistory.db'
 sms_filename = 'sms.xml'
 calls_filename = 'calls.xml'
+
+parser = argparse.ArgumentParser(description="Convert Sailfish SMS and call history to XML to be imported to Android phones.")
+parser.add_argument('--commhistory', help="the path to the commhistory.db file from the Sailfish phone")
+
+args = parser.parse_args()
+jolla_db_filename = args.commhistory or 'commhistory.db'
 
 cols = ["id", "type", "startTime", "endTime", "direction", "isDraft", "isRead", "isMissedCall", "isEmergencyCall", "status", "bytesReceived", "localUid", "remoteUid", "parentId", "subject", "freeText", "groupId", "messageToken", "lastModified", "vCardFileName", "vCardLabel", "isDeleted", "reportDelivery", "validityPeriod", "contentLocation", "messageParts", "headers", "readStatus", "reportRead", "reportedReadRequested", "mmsId", "isAction", "hasExtraProperties", "hasMessageParts"]
 
