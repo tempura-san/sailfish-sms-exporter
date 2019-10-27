@@ -30,16 +30,13 @@ outxml = ET.Element('smses')
 outxml.set('count', str(len(entries)))
 
 for entry in entries:
-    direction = entry[cols.index('direction')]
-    sentdate = datetime.fromtimestamp(entry[cols.index('startTime')])
-
     # a description of the used XML format can be found here:
     # https://synctech.com.au/sms-backup-restore/fields-in-xml-backup-files/
     sms = ET.SubElement(outxml, 'sms')
     sms.set('protocol', "0") # 0 = SMS
     sms.set('address', str(entry[cols.index('remoteUid')])) # phone number
     sms.set('date', str(entry[cols.index('startTime')] * 1000)) # date sent/received
-    sms.set('type', str(direction)) # 1..received, 2..sent
+    sms.set('type', str(entry[cols.index('direction')])) # 1..received, 2..sent
     sms.set('subject', entry[cols.index('subject')] or "null") # usually "null" for SMS
     sms.set('body', entry[cols.index('freeText')] or "") # message content
     sms.set('read', str(entry[cols.index('isRead')])) # 0..unread, 1..read
@@ -52,10 +49,8 @@ cursor = connection.cursor()
 cursor.execute("SELECT * FROM Events WHERE type=3")
 entries = cursor.fetchall()
 
-out = """<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<!--File Created on {date}-->
-<?xml-stylesheet type="text/xsl" href="calls.xsl"?>
-<calls count="{count}">""".format(count=len(entries), date=date.strftime("%d/%m/%y %H:%M:%S"))
+outxml = ET.Element('calls')
+outxml.set('count', str(len(entries)))
 
 for entry in entries:
     if entry[cols.index('isMissedCall')]:
