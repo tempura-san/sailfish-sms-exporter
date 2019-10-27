@@ -42,7 +42,7 @@ for entry in entries:
     sms.set('type', str(direction)) # 1..received, 2..sent
     sms.set('subject', entry[cols.index('subject')] or "null") # usually "null" for SMS
     sms.set('body', entry[cols.index('freeText')] or "") # message content
-    sms.set('read', str(entry[cols.index('isRead')])) # assume all messages are read
+    sms.set('read', str(entry[cols.index('isRead')])) # 0..unread, 1..read
     sms.set('status', "-1") # Status = None
 
 with open(sms_filename, 'wb') as fp:
